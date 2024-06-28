@@ -2,12 +2,12 @@ package carte;
 
 import java.util.Objects;
 
-public class Carte {
+public class Card {
 	
 	private NomCarte Nom; 
 	private String numCarte;
 
-	public Carte(NomCarte nom, String numCarte) {
+	public Card(NomCarte nom, String numCarte) {
 		Nom = nom;
 		this.numCarte = numCarte;
 	}
@@ -36,8 +36,8 @@ public class Carte {
 	@Override
 	public boolean equals(Object obj) {
 	    if (this == obj) return true;
-	    if (!(obj instanceof Carte)) return false;
-	    Carte autreCarte = (Carte) obj;
+	    if (!(obj instanceof Card)) return false;
+	    Card autreCarte = (Card) obj;
 	    return Objects.equals(Nom, autreCarte.Nom) &&
 	           Objects.equals(numCarte, autreCarte.numCarte);
 	}

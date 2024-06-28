@@ -3,9 +3,17 @@ package carte;
 import exceptions.EmptyListOfCardsException;
 
 public class Main {
-	
-	public static void main(String[] args) throws EmptyListOfCardsException {
-		 JeuMensonge jeu = new JeuMensonge();
-		 jeu.jouer();
+
+	public static void main(String[] args) {
+
+		JeuMensonge jeuMensonge = new JeuMensonge();
+		try {
+			jeuMensonge.play();
+
+		} catch (EmptyListOfCardsException e) {
+			e.getMessage();
+		}
+
 	}
+
 }

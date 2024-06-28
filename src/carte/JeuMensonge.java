@@ -2,6 +2,7 @@ package carte;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -9,70 +10,73 @@ import exceptions.EmptyListOfCardsException;
 
 public class JeuMensonge  implements JeuCarte{
 
-	private static final String[] listeNumcarte = { "A", "7", "8", "9", "10", "J", "Q", "K" };
+	private static final String[] numberCardsList = { "A", "7", "8", "9", "10", "J", "Q", "K" };
 	
 	public JeuMensonge() {
 		super();
 	}
 
 	// creation du paquet de carte
-	public void creationDesCarte(ArrayList<Carte> cardList) throws EmptyListOfCardsException {
-		for (int j = 0; j < listeNumcarte.length; j++) {
-			cardList.add(new Carte(NomCarte.Carreau, listeNumcarte[j]));
-			cardList.add(new Carte(NomCarte.Trefle, listeNumcarte[j]));
-			cardList.add(new Carte(NomCarte.Coeur, listeNumcarte[j]));
-			cardList.add(new Carte(NomCarte.Pique, listeNumcarte[j]));
+	@Override
+	public void createCards(List<Card> listeDeCarte) throws EmptyListOfCardsException {
+		for (int j = 0; j < numberCardsList.length; j++) {
+			listeDeCarte.add(new Card(NomCarte.Carreau, numberCardsList[j]));
+			listeDeCarte.add(new Card(NomCarte.Trefle, numberCardsList[j]));
+			listeDeCarte.add(new Card(NomCarte.Coeur, numberCardsList[j]));
+			listeDeCarte.add(new Card(NomCarte.Pique, numberCardsList[j]));
 		}
 	}
 
 	// melage des carte
-	public void melangerJeu(ArrayList<Carte> liste) throws EmptyListOfCardsException {
-		Collections.shuffle(liste);
+	@Override
+	public void mixCards(List<Card> listeDeCarte) throws EmptyListOfCardsException {
+		Collections.shuffle(listeDeCarte);
 		System.out.println("-------------------------Melange des carte -----------------------\n");
-		afficherPaquetCarte(liste);
+		showCards(listeDeCarte);
 	}
 
-	public void afficherPaquetCarte(ArrayList<Carte> liste) throws EmptyListOfCardsException{
+	public void showCards(List<Card> listeDeCarte) throws EmptyListOfCardsException{
 		int i = 1;
-		for (Carte carte : liste) {
+		for (Card carte : listeDeCarte) {
 			System.out.println(i + "- " + carte.toString() + "\n");
 			i++;
 		}
 	}
 
-	public void CreationJoueurs(ArrayList<Joueur> listeJoueur) throws EmptyListOfCardsException{
+	public void createPlayer(List<Player> listeJoueur) throws EmptyListOfCardsException{
 		Scanner clavier = new Scanner(System.in);
 		System.out.println("Entre le nombre de joueurs => ");
 		int nbreJoueur = clavier.nextInt();
 
 		for (int i = 0; i < nbreJoueur; i++) {
-			listeJoueur.add(new Joueur("Joueur_" + (i + 1)));
+			listeJoueur.add(new Player("Joueur_" + (i + 1)));
 		}
 		clavier.close();
 	}
-
-	public void removeCard(Carte carte, ArrayList<Carte> listeCarteJouer) throws EmptyListOfCardsException{
-		listeCarteJouer
+	
+	@Override
+	public void removeCards(Card carte, List<Card> listeDeCarte) throws EmptyListOfCardsException{
+		listeDeCarte
 				.removeIf(car -> car.getNom().equals(carte.getNom()) && car.getNumCarte().equals(carte.getNumCarte()));
 	}
-
-	public void distributionCarte(ArrayList<Carte> listeDeCarte, ArrayList<Joueur> listeJoueur) throws EmptyListOfCardsException {
+	@Override
+	public void distribute(List<Card> listeDeCarte, List<Player> listeJoueur) throws EmptyListOfCardsException {
 		int nbrePartMain = listeDeCarte.size() / listeJoueur.size();
-		for (Joueur joueur : listeJoueur) {
+		for (Player  joueur : listeJoueur) {
 			for (int i = 0; i < nbrePartMain; i++) {
 				joueur.getMain().add(listeDeCarte.getLast());
-				removeCard(joueur.getMain().getLast(), listeDeCarte);
+				removeCards(joueur.getMain().getLast(), listeDeCarte);
 			}
 		}
 		afficherCarteChacun(listeJoueur);
 	}
 
-	public void afficherCarteChacun(ArrayList<Joueur> listeJoueur) {
-		for (Joueur joueur : listeJoueur) {
+	public void afficherCarteChacun(List<Player> listeJoueur) {
+		for (Player joueur : listeJoueur) {
 			System.out.println(
 					"~~~~~~~~~~~~~~~~~~~~~~~~~~Main du " + joueur.getNomJoueur() + "~~~~~~~~~~~~~~~~~~~~~~~~\n");
 			int i = 1;
-			for (Carte carte : joueur.getMain()) {
+			for (Card carte : joueur.getMain()) {
 				System.out.println(i + "- " + carte);
 				i++;
 			}
@@ -80,7 +84,8 @@ public class JeuMensonge  implements JeuCarte{
 		}
 	}
 
-	public void jouerUneCarte(Joueur joueur, ArrayList<Carte> listeCarteJouer, Carte carteCourante) {
+	@Override
+	public void playOneCard(Player joueur, List<Card> listeCarteJouer, Card currentCard) {
 		Random rand = new Random();
 		int nombreAleatoire = rand.nextInt(joueur.getMain().size());
 
@@ -89,24 +94,24 @@ public class JeuMensonge  implements JeuCarte{
 		NomCarte avis = values[index];
 
 		listeCarteJouer.add(joueur.getMain().get(nombreAleatoire));
-		carteCourante.setNom(joueur.getMain().get(nombreAleatoire).getNom());
-		carteCourante.setNumCarte(joueur.getMain().get(nombreAleatoire).getNumCarte());
+		currentCard.setNom(joueur.getMain().get(nombreAleatoire).getNom());
+		currentCard.setNumCarte(joueur.getMain().get(nombreAleatoire).getNumCarte());
 		joueur.getMain().remove(nombreAleatoire);
 
 		System.out.println("=> Le " + joueur.getNomJoueur() + " dit " + avis + "\n");
-		System.out.println("La carte qui a ete jouer est la carte => " + carteCourante.toString() + "\n");
+		System.out.println("La carte qui a ete jouer est la carte => " + currentCard.toString() + "\n");
 		int i = 1;
 		System.out.println("La main du " + joueur.getNomJoueur() + " est desormais \n");
-		for (Carte carte : joueur.getMain()) {
+		for (Card carte : joueur.getMain()) {
 			System.out.println(i + "- " + carte);
 			i++;
 		}
 	}
 
-	public void refuter(Joueur jou, ArrayList<Joueur> listeJoueur, Carte carteCourante, NomCarte avis,
-			ArrayList<Carte> listeCarteJouer) throws EmptyListOfCardsException {
+	public void contradict(Player jou, List<Player> listeJoueur, Card carteCourante, NomCarte avis,
+			List<Card> listeCarteJouer) throws EmptyListOfCardsException {
 		// Créer une liste de joueurs excluant le joueur actuel
-		ArrayList<Joueur> listeAutresJoueurs = new ArrayList<>(listeJoueur);
+		;List<Player> listeAutresJoueurs = new ArrayList<>(listeJoueur);
 		listeAutresJoueurs.remove(jou);
 
 		// Vérifier qu'il reste bien des joueurs après la suppression
@@ -130,27 +135,28 @@ public class JeuMensonge  implements JeuCarte{
 	}
 	
 	@Override
-	public void jouer() throws EmptyListOfCardsException {
-		ArrayList<Carte> listeDeCarte = new ArrayList<Carte>();
-		ArrayList<Joueur> listeJoueur = new ArrayList<Joueur>();
-		Carte carteCourante = new Carte(null, null);
-		ArrayList<Carte> listeCarteJouer = new ArrayList<Carte>();
+	public void play() throws EmptyListOfCardsException {
+		List<Card> listeDeCarte = new ArrayList<Card>();
+		List<Player> listeJoueur = new ArrayList<Player>();
+		Card carteCourante = new Card(null, null);
+		List<Card> listeCarteJouer = new ArrayList<Card>();
 
-		creationDesCarte(listeDeCarte);
-		afficherPaquetCarte(listeDeCarte);
+		createCards(listeDeCarte);
+		showCards(listeDeCarte);
 
-		melangerJeu(listeDeCarte);
-		CreationJoueurs(listeJoueur);
-		distributionCarte(listeDeCarte, listeJoueur);
+		mixCards(listeDeCarte);
+		createPlayer(listeJoueur);
+		
+		distribute(listeDeCarte, listeJoueur);
 
 		boolean jeuEnCours = true;
 		while (jeuEnCours) {
-			for (Joueur joueur : listeJoueur) {
+			for (Player joueur : listeJoueur) {
 
-				jouerUneCarte(joueur, listeCarteJouer, carteCourante);
+				playOneCard(joueur, listeCarteJouer, carteCourante);
 
 				NomCarte avis = NomCarte.values()[new Random().nextInt(NomCarte.values().length)];
-				refuter(joueur, listeJoueur, carteCourante, avis, listeCarteJouer);
+				contradict(joueur, listeJoueur, carteCourante, avis, listeCarteJouer);
 
 				if (joueur.getMain().isEmpty()) {
 					System.out.println("Le gagnant est " + joueur.getNomJoueur() + " !");

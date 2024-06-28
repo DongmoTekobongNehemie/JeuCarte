@@ -2,11 +2,11 @@ package carte;
 
 import java.util.ArrayList;
 
-public class Joueur {
+public class Player {
 	private String nomJoueur;
-	private ArrayList<Carte> Main = new ArrayList<Carte>();
+	private ArrayList<Card> Main = new ArrayList<Card>();
 
-	public Joueur(String nomJoueur) {
+	public Player(String nomJoueur) {
 		this.nomJoueur= nomJoueur;
 	}
 
@@ -18,11 +18,11 @@ public class Joueur {
 		this.nomJoueur = nomJoueur;
 	}
 
-	public ArrayList<Carte> getMain() {
+	public ArrayList<Card> getMain() {
 		return Main;
 	}
 
-	public void setMain(ArrayList<Carte> main) {
+	public void setMain(ArrayList<Card> main) {
 		Main = main;
 	}
 	
